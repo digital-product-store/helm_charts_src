@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  selector:
+    matchLabels:
+      app: product
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      serviceAccountName: product-sa
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AWS_REGION
+              value: {{ .Values.aws.region }}
+            - name: AWS_S3_BUCKET_NAME
+              value: {{ .Values.aws.bucket_name }}
+            - name: DB_ENDPOINT
+              value: {{ .Values.db.endpoint }}
+            - name: DB_USERNAME
+              value: {{ .Values.db.username }}
+            - name: DB_NAME
+              value: {{ .Values.db.name }}
+          livenessProbe:
+            httpGet:
+              path: "/_health"
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3

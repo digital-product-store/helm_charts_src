@@ -1,0 +1,18 @@
+replicaCount: 1
+
+image:
+  repository:
+  tag:
+
+aws:
+  region:
+  bucket_name:
+  role_arn:
+
+db:
+  endpoint:
+  username:
+  name:
+
+service:
+  host:

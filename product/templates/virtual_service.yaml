@@ -1,0 +1,31 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: product
+spec:
+  hosts:
+  - {{ .Values.service.host }}
+  gateways:
+  - product-gateway
+  http:
+  - name: "admin-routes"
+    match:
+    - uri:
+        prefix: /admin
+      headers:
+        "@request.auth.claims.dat.roles":
+          exact: admin
+    route:
+    - destination:
+        host: product-service
+        port:
+          number: 80
+  - name: "public"
+    match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        host: product-service
+        port:
+          number: 80

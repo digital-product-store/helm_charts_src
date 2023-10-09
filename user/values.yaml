@@ -1,0 +1,11 @@
+replicaCount: 1
+
+image:
+  repository:
+  tag:
+
+service:
+  host:
+
+jwt:
+  private_key:

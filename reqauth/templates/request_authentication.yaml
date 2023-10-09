@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: ingress-jwt
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      istio: ingress
+  jwtRules:
+  - issuer: "user@a-digitalstore.test.local"
+    jwks: |
+      {{ .Values.jwks | b64dec }}
+    outputClaimToHeaders:
+    - header: "x-user-id"
+      claim: "dat.user_id"

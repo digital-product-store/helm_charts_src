@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: user
+spec:
+  hosts:
+  - {{ .Values.service.host }}
+  gateways:
+  - user-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        host: user-service
+        port:
+          number: 80

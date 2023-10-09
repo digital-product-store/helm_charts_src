@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  selector:
+    matchLabels:
+      app: user
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: keys-secret
+              readOnly: true
+              mountPath: "/opt/keys"
+          env:
+            - name: JWT_PRIVATE_KEY
+              value: "/opt/keys/private_key"
+          livenessProbe:
+            httpGet:
+              path: "/_health"
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: keys-secret
+          secret:
+            secretName: user-jwt-priv-key
